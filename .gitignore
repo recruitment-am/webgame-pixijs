@@ -1,0 +1,12 @@
+.idea/
+node_modules/
+*.map
+.DS_Store
+.sourcemaps
+dist/
+#/src/public/atlas
+#!/src/public/atlas/.gitkeep
+
+gulpfile.js
+sounds
+tools
