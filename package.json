@@ -2,7 +2,13 @@
   "name": "webgame-pixi",
   "version": "1.0.0",
   "main": "index.js",
-  "keywords": ["pixi", "WebGL", "vite", "game", "example"],
+  "keywords": [
+    "pixi",
+    "WebGL",
+    "vite",
+    "game",
+    "example"
+  ],
   "engines": {
     "npm": ">=8.11.0",
     "node": ">=16.16.0 <17.0.0"
@@ -22,6 +28,7 @@
   "devDependencies": {
     "@types/react": "^18.2.8",
     "@types/react-dom": "^18.2.4",
+    "@typescript-eslint/eslint-plugin": "^5.59.11",
     "@vitejs/plugin-react": "^4.0.0",
     "eslint": "^8.42.0",
     "eslint-plugin-react-hooks": "^4.6.0",

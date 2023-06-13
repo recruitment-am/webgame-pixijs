@@ -1,5 +1,5 @@
 import { logAs } from '../systems/Logger';
-import { round } from '../systems/utils';
+import { getRandomElement, round } from '../systems/utils';
 
 import Fruit from './elements/Fruit';
 import { FruitEnumEntries } from './elements/FruitTypes';
@@ -13,7 +13,7 @@ const RAND_TIME = 1800;
 const BASE_TIME = 3700;
 
 export default class FruitsGenerator {
-  private nextFruitAt: number = 0;
+  private nextFruitAt = 0;
 
   private randTime = RAND_TIME;
   private baseTime = BASE_TIME;
@@ -24,7 +24,7 @@ export default class FruitsGenerator {
 
   spawnFruit() {
     const fruit = new Fruit(this.level);
-    const randomFruitType = Phaser.Utils.Array.GetRandom(FruitEnumEntries);
+    const randomFruitType = getRandomElement(FruitEnumEntries);
     fruit.startFalling(randomFruitType);
     this.level.activeFruits.push(fruit);
 

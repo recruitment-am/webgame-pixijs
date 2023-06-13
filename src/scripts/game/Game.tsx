@@ -1,11 +1,9 @@
-import 'phaser';
-
 import { useEffect } from 'react';
 import Lives from '../hud/Lives';
 import Score from '../hud/Score';
 import './Game.css';
 import { GameDispatch, GameState, useGame } from './GameContext';
-import Align from './systems/Align';
+import { Align } from './systems/Align';
 import { logger } from './systems/Logger';
 
 export let gameInstance: any;
@@ -72,7 +70,7 @@ export function handleResize() {
   );
 
   const canvasWidth = viewportWidth;
-  let canvasHeight = viewportHeight;
+  const canvasHeight = viewportHeight;
 
   storedCanvasWidth = canvasWidth;
   storedCanvasHeight = canvasHeight;

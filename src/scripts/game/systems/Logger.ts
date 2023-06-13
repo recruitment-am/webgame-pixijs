@@ -1,4 +1,3 @@
-import Phaser from 'phaser';
 import { jsonStringifySafe, selectFromObj } from './utils';
 
 export type MessageType = 'info' | 'warn' | 'error';
@@ -10,7 +9,6 @@ export interface IMessage {
 
 export default class Logger {
   readonly messages: IMessage[] = [];
-  readonly events: Phaser.Events.EventEmitter = new Phaser.Events.EventEmitter();
 
   logDebug = false;
   isLogOn = true;
@@ -116,7 +114,7 @@ export default class Logger {
 
 export const logger = new Logger();
 
-export function logAs(subject: string, message: string, colorAs: string = '#d0b659') {
+export function logAs(subject: string, message: string, colorAs = '#d0b659') {
   logWithColor(`%c[${subject}] %c ${message}`, colorAs, '#88aaff');
 }
 

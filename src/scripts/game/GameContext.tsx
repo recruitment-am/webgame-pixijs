@@ -42,12 +42,14 @@ function gameReducer(state: GameState, action: GameAction) {
   let newState: GameState;
   switch (action.type) {
     case 'addScore':
-      const points = action.points ?? 1;
-      logAs('gameReducer', 'Add score: ' + points);
-      newState = {
-        ...state,
-        score: state.score + points,
-      };
+      {
+        const points = action.points ?? 1;
+        logAs('gameReducer', 'Add score: ' + points);
+        newState = {
+          ...state,
+          score: state.score + points,
+        };
+      }
       break;
 
     case 'takeLife':

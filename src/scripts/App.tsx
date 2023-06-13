@@ -19,7 +19,7 @@ export default function App(): JSX.Element {
     }, 1200);
 
     return () => clearTimeout(id);
-  }, []);
+  }, [setLoading]);
 
   return (
     <>

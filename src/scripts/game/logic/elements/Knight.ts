@@ -2,15 +2,15 @@ export default class Knight {
   x = 0;
   y = 0;
 
-  speedX: number = 0;
-  speedY: number = 0;
+  speedX = 0;
+  speedY = 0;
 
   // controlled by user input
-  moveY: number = 0;
-  moveX: number = 0;
+  moveY = 0;
+  moveX = 0;
 
-  private maxSpeed: number = 27;
-  private movingInertia: number = 15;
+  private maxSpeed = 27;
+  private movingInertia = 15;
 
   update(delta: number) {
     // speed-based movement

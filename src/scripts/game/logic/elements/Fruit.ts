@@ -45,7 +45,7 @@ export default class Fruit {
     this.events.emit(LevelEvents.FruitDropped, this);
   }
 
-  update(delta: number = 0) {
+  update(delta: number) {
     this._y += (delta / 1000) * this._fallingSpeed;
     this._z -= (delta / 1000) * this._fallingSpeed;
   }

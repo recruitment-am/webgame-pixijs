@@ -4,7 +4,8 @@ export default defineConfig({
   root: './src',
   build: {
     outDir: '../dist',
-    minify: false,
+    minify: true,
     emptyOutDir: true,
+    chunkSizeWarningLimit: 2000,
   },
 });

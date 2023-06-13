@@ -2,6 +2,11 @@ export function deepClone<T>(objectToClone: T): T {
   return JSON.parse(JSON.stringify(selectFromObj(objectToClone)));
 }
 
+export function getRandomElement<T>(items: T[]): T {
+  if (!items?.length) throw Error('Empty array');
+  return items[Math.floor(Math.random() * items.length)];
+}
+
 export const round = (d: number, digits = 2) => Math.round(d * Math.pow(10, digits)) / Math.pow(10, digits);
 
 export type Primitives =
