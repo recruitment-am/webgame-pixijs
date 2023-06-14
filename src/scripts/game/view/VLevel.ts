@@ -7,7 +7,7 @@ export default class VLevel extends Graphics {
     super();
     this.beginFill(0, 0.08);
     const w = model.level.config.sizeX * modelToViewScale;
-    const h = model.level.config.sizeX * modelToViewScale;
+    const h = model.level.config.sizeY * modelToViewScale;
     this.drawRect(-w / 2, -h / 2, w, h);
     this.endFill();
   }

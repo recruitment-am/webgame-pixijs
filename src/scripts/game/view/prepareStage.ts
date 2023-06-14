@@ -1,4 +1,4 @@
-import { Application, Assets, Container, SCALE_MODES, Spritesheet } from 'pixi.js';
+import { Application, Assets, Container, SCALE_MODES, Spritesheet, Ticker } from 'pixi.js';
 import GameLoop from '../logic/GameLoop';
 import { Align } from '../systems/Align';
 import VKnight from './VKnight';
@@ -24,6 +24,13 @@ export async function prepareStage(game: Application, model: GameLoop) {
 
   globalWrapper.addChildAt(vKnight.shadowAsset, 1);
 
+  // update model using Pixi's Ticker
+  Ticker.shared.add(() => {
+    model.updateTick();
+  });
+
+  // on resize - fit wrapper to the screen/canvas size with Align helper tool
+  // respect VLevel width/height
   Align.onResize(() => {
     globalWrapper.scale.set(
       Math.min((Align.width * 0.9) / vLevel.width, (Align.height * 0.8) / vLevel.height)

@@ -1,5 +1,6 @@
 import { AnimatedSprite, Sprite, Texture } from 'pixi.js';
 import Knight from '../logic/elements/Knight';
+import { modelToViewScale } from './VGlobals';
 
 const AnimKeys = {
   idle: 'idle',
@@ -65,6 +66,28 @@ export default class VKnight extends AnimatedSprite {
       shadowAsset.anchor.set(0.5, 0.7);
       shadowAsset.scale.set(6, 3);
       this.updateShadowPosition();
+    }
+  }
+
+  update(delta: number) {
+    super.update(delta);
+
+    const { knight } = this;
+
+    this.x = knight.x * modelToViewScale;
+    this.y = knight.y * modelToViewScale;
+
+    this.updateShadowPosition();
+
+    // animation/view
+    if (Math.abs(knight.speedX) + Math.abs(knight.speedY) < 7.5) {
+      this.switchAnim(AnimKeys.idle);
+    } else {
+      if (Math.abs(knight.speedX) > 5) {
+        this.switchAnim(knight.speedX > 0 ? 'runRight' : 'runLeft');
+      } else if (Math.abs(knight.speedY) > 5) {
+        this.switchAnim(knight.speedY > 0 ? 'runDown' : 'runUp');
+      }
     }
   }
 

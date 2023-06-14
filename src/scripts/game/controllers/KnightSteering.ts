@@ -1,40 +1,44 @@
-import GameScene from '../GameScene';
+import { GameInputs } from 'game-inputs';
+import { Ticker } from 'pixi.js';
 import Knight from '../logic/elements/Knight';
 
 export default class KnightSteering {
-  private keyboard;
+  private inputs;
   private knight;
-  private upKey;
-  private downKey;
-  private rightKey;
-  private leftKey;
 
-  constructor(scene: GameScene, knight: Knight) {
+  constructor(knight: Knight) {
     this.knight = knight;
 
-    if (!scene.input.keyboard) {
+    const element = document.getElementById('game-canvas');
+    if (!element) {
       throw Error('Keyboard not available');
     }
 
-    this.upKey = scene.input.keyboard.addKey('up');
-    this.downKey = scene.input.keyboard.addKey('down');
-    this.leftKey = scene.input.keyboard.addKey('left');
-    this.rightKey = scene.input.keyboard.addKey('right');
+    const inputs = new GameInputs(element, {
+      allowContextMenu: false,
+      preventDefaults: true,
+      stopPropagation: false,
+      disabled: false,
+    });
+    this.inputs = inputs;
+    inputs.bind('move-up', 'KeyW', 'ArrowUp');
+    inputs.bind('move-down', 'KeyS', 'ArrowDown');
+    inputs.bind('move-left', 'KeyA', 'ArrowLeft');
+    inputs.bind('move-right', 'KeyD', 'ArrowRight');
 
-    this.keyboard = scene.input.keyboard;
-
-    scene.events.on(Phaser.Scenes.Events.UPDATE, this.update, this);
+    Ticker.shared.add(this.update, this);
   }
 
   update() {
-    const { keyboard, knight } = this;
+    const { inputs, knight } = this;
 
     {
       // vertical
-      const { upKey, downKey } = this;
-      if (keyboard.checkDown(upKey)) {
+      const upKey = inputs.state['move-up'];
+      const downKey = inputs.state['move-down'];
+      if (upKey) {
         knight.moveY = -1;
-      } else if (keyboard.checkDown(downKey)) {
+      } else if (downKey) {
         knight.moveY = 1;
       } else {
         knight.moveY = 0;
@@ -43,14 +47,17 @@ export default class KnightSteering {
 
     {
       // horizontal
-      const { leftKey, rightKey } = this;
-      if (keyboard.checkDown(leftKey)) {
+      const leftKey = inputs.state['move-left'];
+      const rightKey = inputs.state['move-right'];
+      if (leftKey) {
         knight.moveX = -1;
-      } else if (keyboard.checkDown(rightKey)) {
+      } else if (rightKey) {
         knight.moveX = 1;
       } else {
         knight.moveX = 0;
       }
     }
+
+    inputs.tick();
   }
 }

@@ -4,6 +4,7 @@ import Lives from '../hud/Lives';
 import Score from '../hud/Score';
 import './Game.css';
 import { GameDispatch, GameState, useGame } from './GameContext';
+import KnightSteering from './controllers/KnightSteering';
 import GameLoop from './logic/GameLoop';
 import { Align } from './systems/Align';
 import { prepareStage } from './view/prepareStage';
@@ -42,6 +43,14 @@ function createPixiInstance(dispatch: GameDispatch, initialState: GameState) {
 
     // create the stage (view)
     await prepareStage(game, model);
+
+    // initialize steering
+    new KnightSteering(model.level.knight);
+
+    // start
+    setTimeout(() => {
+      model.start();
+    }, 500);
   }
 }
 
