@@ -1,6 +1,7 @@
 import { Application, Assets, Container, SCALE_MODES, Spritesheet, Ticker } from 'pixi.js';
 import GameLoop from '../logic/GameLoop';
 import { Align } from '../systems/Align';
+import VFruitsFactory from './VFruitsFactory';
 import VKnight from './VKnight';
 import VLevel from './VLevel';
 
@@ -19,10 +20,16 @@ export async function prepareStage(game: Application, model: GameLoop) {
   const vLevel = new VLevel(model);
   globalWrapper.addChild(vLevel);
 
+  const vFruitsFactory = new VFruitsFactory(model);
+  globalWrapper.addChild(vFruitsFactory.shadowsLayer);
+
   const vKnight = new VKnight(model.level.knight);
   globalWrapper.addChild(vKnight);
 
   globalWrapper.addChildAt(vKnight.shadowAsset, 1);
+
+  // fruits should be displayed in the front
+  globalWrapper.addChild(vFruitsFactory.fruitLayer);
 
   // update model using Pixi's Ticker
   Ticker.shared.add(() => {
