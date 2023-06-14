@@ -1,5 +1,5 @@
 import { AnimatedSprite, Sprite, Texture } from 'pixi.js';
-import Knight from '../logic/elements/Knight';
+import GameLoop, { GameLoopEvents } from '../logic/GameLoop';
 import { modelToViewScale } from './VGlobals';
 
 const AnimKeys = {
@@ -24,6 +24,8 @@ const AnimFramesIndex = {
 } as Record<string, number | undefined>;
 
 export default class VKnight extends AnimatedSprite {
+  readonly knight;
+
   private _animationFrames: Record<AnimNames, Texture[]>;
   private _shadowAsset: Sprite;
   public get shadowAsset(): Sprite {
@@ -32,7 +34,7 @@ export default class VKnight extends AnimatedSprite {
 
   currentAnimKey: AnimNames;
 
-  constructor(private readonly knight: Knight) {
+  constructor(private readonly model: GameLoop) {
     const animationTextures = Object.fromEntries(
       (Object.keys(AnimKeys) as (keyof typeof AnimKeys)[]).map((key) => {
         // num of frames per animation
@@ -67,12 +69,26 @@ export default class VKnight extends AnimatedSprite {
       shadowAsset.scale.set(6, 3);
       this.updateShadowPosition();
     }
+
+    this.knight = model.level.knight;
+    model.events.once(GameLoopEvents.GameOver, this.handleGameOver, this);
+  }
+
+  private handleGameOver() {
+    const { shadowAsset } = this;
+    this.switchAnim('idle', { frameRate: 0.3 });
+
+    shadowAsset.visible = false;
+
+    this.tint = 0x777777;
+    this.alpha = 0.5;
   }
 
   update(delta: number) {
     super.update(delta);
 
-    const { knight } = this;
+    const { knight, model } = this;
+    if (model.state !== 'playing') return;
 
     this.x = knight.x * modelToViewScale;
     this.y = knight.y * modelToViewScale;

@@ -15,24 +15,29 @@ export async function prepareStage(game: Application, model: GameLoop) {
   // pixel art style
   result.baseTexture.scaleMode = SCALE_MODES.NEAREST;
 
+  // global wrapper is resized to canvas-size
   const globalWrapper = new Container();
   game.stage.addChild(globalWrapper);
 
   const vLevel = new VLevel(model);
   globalWrapper.addChild(vLevel);
 
-  const vFruitsFactory = new VFruitsFactory(model);
-  globalWrapper.addChild(vFruitsFactory.shadowsLayer);
+  // layers to keep order of rendering proper
+  const shadowsLayer = new Container();
+  const fruitLayer = new Container();
 
-  const vKnight = new VKnight(model.level.knight);
-  globalWrapper.addChild(vKnight);
+  // view elements
+  const vKnight = new VKnight(model);
 
-  globalWrapper.addChildAt(vKnight.shadowAsset, 1);
+  new VFruitsFactory(model, { shadowsLayer, fruitLayer });
 
   // fruits should be displayed in the front
-  globalWrapper.addChild(vFruitsFactory.fruitLayer);
+  globalWrapper.addChild(shadowsLayer);
+  globalWrapper.addChild(vKnight);
+  globalWrapper.addChild(fruitLayer);
+  shadowsLayer.addChild(vKnight.shadowAsset);
 
-  new VFruitsOnFloorDecalsFx(model, vFruitsFactory.shadowsLayer);
+  new VFruitsOnFloorDecalsFx(model, shadowsLayer);
 
   // update model using Pixi's Ticker
   Ticker.shared.add(() => {

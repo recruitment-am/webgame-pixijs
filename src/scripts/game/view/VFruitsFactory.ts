@@ -12,20 +12,15 @@ export const FruitsGeneratorEvents = {
 
 export default class VFruitsFactory {
   readonly events = new EventEmitter();
-  readonly shadowsLayer;
-  readonly fruitLayer;
 
   private pool?: VFruit[];
 
-  constructor(model: GameLoop) {
-    this.shadowsLayer = new Container();
-    this.fruitLayer = new Container();
+  constructor(model: GameLoop, layers: { shadowsLayer: Container; fruitLayer: Container }) {
+    const { shadowsLayer, fruitLayer } = layers;
 
     const putBackToPool = (fruit: VFruit) => {
       this.pool?.unshift(fruit);
     };
-
-    const { fruitLayer, shadowsLayer } = this;
 
     const pool = new Array(20).fill(null).map(() => {
       const fruit = new VFruit(putBackToPool);

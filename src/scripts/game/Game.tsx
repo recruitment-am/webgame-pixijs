@@ -37,6 +37,7 @@ function createPixiInstance(dispatch: GameDispatch, initialState: GameState) {
     });
     gameInstance = game;
 
+    // init "Align" utility (window responsiveness)
     Align.init(game);
 
     // create model
