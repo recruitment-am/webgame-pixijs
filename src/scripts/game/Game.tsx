@@ -7,6 +7,7 @@ import { GameDispatch, GameState, useGame } from './GameContext';
 import KnightSteering from './controllers/KnightSteering';
 import GameLoop from './logic/GameLoop';
 import { Align } from './systems/Align';
+import { logAs } from './systems/Logger';
 import { prepareStage } from './view/prepareStage';
 
 let gameInstance: Application;
@@ -50,6 +51,7 @@ function createPixiInstance(dispatch: GameDispatch, initialState: GameState) {
     // start
     setTimeout(() => {
       model.start();
+      logAs('Game', 'Started!');
     }, 500);
   }
 }

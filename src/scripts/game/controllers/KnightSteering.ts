@@ -1,6 +1,7 @@
 import { GameInputs } from 'game-inputs';
 import { Ticker } from 'pixi.js';
 import Knight from '../logic/elements/Knight';
+import { logAs } from '../systems/Logger';
 
 export default class KnightSteering {
   private inputs;
@@ -27,6 +28,8 @@ export default class KnightSteering {
     inputs.bind('move-right', 'KeyD', 'ArrowRight');
 
     Ticker.shared.add(this.update, this);
+
+    logAs('KnightSteering', 'Initialized');
   }
 
   update() {
