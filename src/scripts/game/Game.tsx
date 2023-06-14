@@ -1,123 +1,64 @@
+import { Application } from 'pixi.js';
 import { useEffect } from 'react';
 import Lives from '../hud/Lives';
 import Score from '../hud/Score';
 import './Game.css';
 import { GameDispatch, GameState, useGame } from './GameContext';
+import GameLoop from './logic/GameLoop';
 import { Align } from './systems/Align';
-import { logger } from './systems/Logger';
+import { prepareStage } from './view/prepareStage';
 
-export let gameInstance: any;
+let gameInstance: Application;
+let gameWrapper: HTMLDivElement;
+
 let timeoutId: ReturnType<typeof setTimeout> | undefined;
 function createPixiInstance(dispatch: GameDispatch, initialState: GameState) {
+  if (gameInstance) return;
+
   // React "Strict.Mode" double-instance mitigation
   clearTimeout(timeoutId);
   timeoutId = setTimeout(doCreate, 100);
 
-  function doCreate() {
-    const wrapper = document.getElementById('game-wrapper');
-    if (!wrapper) throw Error('No wrapper found for game in DOM');
+  async function doCreate() {
+    gameWrapper = document.getElementById('game-wrapper') as HTMLDivElement;
+    if (!gameWrapper) throw Error('No wrapper found for game in DOM');
 
-    // create Pixi renderer instance
-    // TODO
+    const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
+    if (!canvas) throw Error('No canvas found for game in DOM');
+    if (!(canvas instanceof HTMLCanvasElement))
+      throw Error('Found canvas in DOM but it is not HTMLCanvasElement');
 
-    updateDevicePixelRatio();
+    // create Pixi application (game)
+    const game = new Application({
+      view: canvas,
+      backgroundColor: 0xf7767a,
+    });
+    gameInstance = game;
 
-    // create "scene"
-    // TODO
+    Align.init(game);
 
-    // fix for background blinking on canvas init
-    wrapper.style.display = 'none';
+    // create model
+    const model = new GameLoop(dispatch);
+
+    // create the stage (view)
+    await prepareStage(game, model);
   }
-}
-
-// call resize - cache prev values to limit re-triggering
-let storedCanvasWidth = 0;
-let storedCanvasHeight = 0;
-let storedNativeDPR = 0;
-
-function updateDevicePixelRatio() {
-  // Get the device pixel ratio, falling back to 1.
-  const nativeDPR = window.devicePixelRatio || 1;
-  if (nativeDPR !== storedNativeDPR) {
-    storedNativeDPR = nativeDPR;
-
-    // do not use full resolution to achieve better performance
-
-    // propagate the ratio to the system
-    Align.setDevicePixelRatio(nativeDPR);
-
-    logger.info(
-      `%c[updateDevicePixelRatio] %cGot native dpr ${nativeDPR.toFixed(2)}`,
-      'background: #222; color: #bc06f0',
-      'background: #222; color: #ddd'
-    );
-  }
-  return nativeDPR;
-}
-
-// the browser responsiveness handler
-export function handleResize() {
-  updateDevicePixelRatio();
-
-  if (storedCanvasWidth) logger.info(`Stored canvas size: ${storedCanvasWidth} x ${storedCanvasHeight}`);
-
-  // Get the size of the canvas in CSS pixels.
-  const viewportWidth = Math.round(
-    Math.max(document.documentElement.clientWidth, window.innerWidth || 0) * Align.devicePixelRatio
-  );
-  const viewportHeight = Math.round(
-    Math.max(document.documentElement.clientHeight, window.innerHeight || 0) * Align.devicePixelRatio
-  );
-
-  const canvasWidth = viewportWidth;
-  const canvasHeight = viewportHeight;
-
-  storedCanvasWidth = canvasWidth;
-  storedCanvasHeight = canvasHeight;
-
-  const game = gameInstance;
-  if (!game) {
-    throw Error('handleResizeForPhaser() No game instance');
-  }
-
-  // Give the canvas pixel dimensions of their CSS
-  // size * the device pixel ratio.
-  game.canvas.width = canvasWidth;
-  game.canvas.height = canvasHeight;
-  game.canvas.style.width = canvasWidth + 'px';
-  game.canvas.style.height = canvasHeight + 'px';
-
-  // resize the game
-  // To fix offset issue - do it after
-  // new margin and dimensions of canvas are set up
-  Align.canvasWidth = canvasWidth;
-  Align.canvasHeight = canvasHeight;
-  Align.viewportWidth = viewportWidth;
-  Align.viewportHeight = viewportHeight;
-
-  // scale the whole game by the inverse of dpr
-  game.scale.setZoom(1 / Align.devicePixelRatio);
-  game.scale.resize(canvasWidth, canvasHeight);
-
-  logger.info(
-    `%c[handleResize] %c{ res: ${Align.canvasWidth}x${Align.canvasHeight} }`,
-    'background: #222; color: #bcf006',
-    'background: #222; color: #ddd'
-  );
 }
 
 export const Game = (): JSX.Element => {
   // we need to pass the game state's dispatch function down to Phaser
-  const { dispatch, state: initialState } = useGame();
-
+  const { dispatch, state } = useGame();
   // create phaser instance
   useEffect(() => {
-    createPixiInstance(dispatch, initialState);
+    createPixiInstance(dispatch, state);
 
     return () => {
       if (!gameInstance) return;
       gameInstance.destroy(true);
     };
+
+    // Do not recreate canvas if state changes (pass only initial state here)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
   return (
@@ -127,7 +68,9 @@ export const Game = (): JSX.Element => {
           <Score />
           <Lives />
         </div>
-        <div id="game-wrapper"></div>
+        <div id="game-wrapper">
+          <canvas id="game-canvas" />
+        </div>
       </div>
     </>
   );
