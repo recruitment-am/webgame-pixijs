@@ -15,11 +15,13 @@ export default class VFruit extends Sprite {
   constructor(private putBackToPool: (fruit: VFruit) => void) {
     super(Texture.from(`fruits/Cookie.png`));
     this.scale.set(3);
+    this.anchor.set(0.5);
     this.visible = false;
 
     // create shadow
     this._shadow = Sprite.from(`fruits/Cookie.png`);
     this._shadow.tint = 0x222222;
+    this._shadow.anchor.set(0.5);
     this._shadow.visible = false;
   }
 

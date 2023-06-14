@@ -4,6 +4,7 @@ import { Align } from '../systems/Align';
 import VFruitsFactory from './VFruitsFactory';
 import VKnight from './VKnight';
 import VLevel from './VLevel';
+import VFruitsOnFloorDecalsFx from './fx/VFruitsOnFloorDecalsFx';
 
 export async function prepareStage(game: Application, model: GameLoop) {
   const ATLAS_JSON = 'atlas/game.json';
@@ -30,6 +31,8 @@ export async function prepareStage(game: Application, model: GameLoop) {
 
   // fruits should be displayed in the front
   globalWrapper.addChild(vFruitsFactory.fruitLayer);
+
+  new VFruitsOnFloorDecalsFx(model, vFruitsFactory.shadowsLayer);
 
   // update model using Pixi's Ticker
   Ticker.shared.add(() => {
