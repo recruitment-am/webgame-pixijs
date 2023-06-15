@@ -1,6 +1,8 @@
-import { GameState, gameEvents } from '../GameContext';
 import { logAs } from '../systems/Logger';
 import GameLoop from './GameLoop';
+
+import type { GameState } from '../GameContext';
+import { gameEvents } from '../GameEvents';
 
 export default class LivesCounter {
   constructor(private loop: GameLoop) {
